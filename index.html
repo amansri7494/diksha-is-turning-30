@@ -111,3 +111,135 @@ iframe {
   align-items: center;
   z-index: 999;
 }
+
+input {
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  margin: 10px;
+  font-size: 18px;
+  width: 80%;
+  max-width: 300px;
+}
+
+#surprise {
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- PASSWORD LOCK -->
+<div id="lock">
+  <h2>Enter the secret ❤️</h2>
+  <input type="password" id="pw">
+  <button onclick="unlock()">Unlock</button>
+</div>
+
+<!-- MUSIC -->
+<audio id="music" autoplay loop>
+  <!-- Replace with Bollywood MP3 -->
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_3d5d1d40a7.mp3">
+</audio>
+
+<div class="hero">
+  <h1>Happy Birthday My Love ❤️</h1>
+  <button onclick="toggleMusic()">🔊 Toggle Music</button>
+</div>
+
+<section>
+<h2>30 Reasons I Love You</h2>
+<div id="reasonsList"></div>
+<button id="nextBtn" onclick="revealNext()">Reveal Next ❤️</button>
+</section>
+
+<section id="surprise">
+<h2>One Last Surprise 💌</h2>
+<iframe height="400"
+src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+allowfullscreen></iframe>
+</section>
+
+<script>
+const PASSWORD="amay";
+function unlock(){
+  if(pw.value===PASSWORD) lock.style.display="none";
+}
+
+function toggleMusic(){
+  const m=document.getElementById("music");
+  m.paused?m.play():m.pause();
+}
+
+// Floating hearts
+setInterval(()=>{
+  const h=document.createElement("div");
+  h.className="heart";
+  h.innerHTML="❤️";
+  h.style.left=Math.random()*100+"vw";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),6000);
+},500);
+
+// Reasons list
+const reasons=[
+"You came into my life and changed everything",
+"You care about all of us with your whole heart",
+"You love me in a way no one else ever could",
+"You gave me the greatest gift of my life — Amay",
+"You are my strength on the hardest days",
+"You tolerate my nonsense and still smile",
+"You understand me without words",
+"Your kindness has no limits",
+"Your strength inspires me every day",
+"Your hug takes all my tensions away",
+"You make our home warm and happy",
+"You stand by me in every phase of life",
+"You believe in us even when things are tough",
+"Your patience amazes me",
+"You have the most beautiful heart",
+"You make me a better person",
+"You sacrifice without ever asking for credit",
+"You always put family first",
+"Your honesty keeps us grounded",
+"Your smile fixes everything",
+"You make tough days feel lighter",
+"You laugh with me like my best friend",
+"You grow with me instead of away from me",
+"You choose me every single day",
+"You have the gentlest soul",
+"Your courage inspires me",
+"You are my partner in everything",
+"You make life meaningful",
+"You are my best friend",
+"You are the love of my life"
+];
+
+let i=0;
+
+function revealNext(){
+  if(i>=reasons.length){
+    nextBtn.style.display="none";
+    surprise.style.display="block";
+    surprise.scrollIntoView({behavior:"smooth"});
+    return;
+  }
+
+  const card=document.createElement("div");
+  card.className="card";
+  card.innerHTML=`<b>${i+1}. ${reasons[i]}</b>
+  <img src="https://picsum.photos/800/450?random=${i}">`;
+
+  reasonsList.appendChild(card);
+
+  // guided scroll
+  setTimeout(()=>card.scrollIntoView({behavior:"smooth",block:"center"}),100);
+  setTimeout(()=>nextBtn.scrollIntoView({behavior:"smooth",block:"center"}),900);
+
+  i++;
+}
+</script>
+
+</body>
+</html>
