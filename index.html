@@ -1,32 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy Birthday ❤️</title>
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+  color: #333;
+  scroll-behavior: smooth;
+}
+
+section {
+  padding: 60px 20px;
+  max-width: 900px;
+  margin: auto;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+.hero {
+  text-align: center;
+  color: white;
+  padding: 100px 20px;
+}
+
+.hero h1 {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+button {
+  background: #ff4d6d;
+  border: none;
+  padding: 12px 20px;
+  color: white;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background: #e63956;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  margin: 10px 0;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.timeline {
+  border-left: 4px solid #ff4d6d;
+  padding-left: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+.love-letter {
+  font-style: italic;
+  background: #fff0f3;
+  padding: 25px;
+  border-radius: 15px;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="hero">
+  <h1>Happy Birthday My Love ❤️</h1>
+  <p>A little website made just for you</p>
+  <button onclick="scrollToSection('reasons')">Start the Surprise</button>
+</div>
+
+<section id="reasons">
+  <h2>30 Reasons I Love You</h2>
+  <div id="reasonsList"></div>
+</section>
+
+<section>
+  <h2>Our Memory Timeline</h2>
+  <div class="timeline">
+    <div class="card">💫 The day we met — everything changed</div>
+    <div class="card">🌍 Our first trip together</div>
+    <div class="card">😂 That night we laughed for hours</div>
+    <div class="card">💍 The promise we made to each other</div>
+    <div class="card">❤️ Today — celebrating YOU</div>
+  </div>
+</section>
+
+<section>
+  <h2>Video Montage</h2>
+  <div class="card">
+    <!-- Replace with your YouTube or Google Drive video -->
+    <iframe width="100%" height="400"
+      src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+      frameborder="0" allowfullscreen>
+    </iframe>
+  </div>
+</section>
+
+<section>
+  <h2>Secret Message</h2>
+  <div style="text-align:center;">
+    <button onclick="revealSecret()">Click for a secret 💌</button>
+    <p id="secret" class="hidden">
+      You are the best thing that ever happened to me.
+      Every year with you is my favorite year ❤️
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2>Digital Love Letter</h2>
+  <div class="love-letter">
+    My love,<br><br>
+    Today is all about celebrating the incredible person you are.
+    Your kindness, your laughter, your strength, and your heart
+    make my world brighter every single day.<br><br>
+
+    Thank you for being my partner, my best friend,
+    and my forever favorite human.<br><br>
+
+    Happy birthday. I love you endlessly. ❤️
+  </div>
+</section>
+
+<footer>
+  Made with love, always ❤️
+</footer>
+
+<script>
 const reasons = [
-  "You came into my life and changed everything",
-  "You care about all of us with your whole heart",
-  "You love me in a way no one else ever could",
-  "You gave me the greatest gift of my life — Amay",
-  "You are my strength on the hardest days",
-  "You tolerate my nonsense and still smile",
-  "You understand me without words",
-  "Your kindness has no limits",
-  "Your strength inspires me every day",
-  "Your hug takes all my tensions away",
-  "You make our home warm and happy",
-  "You stand by me in every phase of life",
-  "You believe in us even when things are tough",
-  "Your patience amazes me",
-  "You have the most beautiful heart",
-  "You make me a better person",
-  "You sacrifice without ever asking for credit",
-  "You always put family first",
-  "Your honesty keeps us grounded",
-  "Your smile fixes everything",
-  "You make tough days feel lighter",
-  "You laugh with me like my best friend",
-  "You grow with me instead of away from me",
-  "You choose me every single day",
-  "You have the gentlest soul",
-  "Your courage inspires me",
-  "You are my partner in everything",
-  "You make life meaningful",
-  "You are my best friend",
-  "You are the love of my life"
+"You came into my life and changed everything",
+"You care about all of us with your whole heart",
+"You love me in a way no one else ever could",
+"You gave me the greatest gift of my life — Amay",
+"You are my strength on the hardest days",
+"You tolerate my nonsense and still smile",
+"You understand me without words",
+"Your kindness has no limits",
+"Your strength inspires me every day",
+"Your hug takes all my tensions away",
+"You make our home warm and happy",
+"You stand by me in every phase of life",
+"You believe in us even when things are tough",
+"Your patience amazes me",
+"You have the most beautiful heart",
+"You make me a better person",
+"You sacrifice without ever asking for credit",
+"You always put family first",
+"Your honesty keeps us grounded",
+"Your smile fixes everything",
+"You make tough days feel lighter",
+"You laugh with me like my best friend",
+"You grow with me instead of away from me",
+"You choose me every single day",
+"You have the gentlest soul",
+"Your courage inspires me",
+"You are my partner in everything",
+"You make life meaningful",
+"You are my best friend",
+"You are the love of my life"
 ];
+
+const container = document.getElementById("reasonsList");
+reasons.forEach((reason, i) => {
+  const div = document.createElement("div");
+  div.className = "card";
+  div.innerText = (i+1) + ". " + reason;
+  container.appendChild(div);
+});
+
+function revealSecret() {
+  document.getElementById("secret").classList.remove("hidden");
+}
+
+function scrollToSection(id) {
+  document.getElementById(id).scrollIntoView();
+}
+</script>
+
+</body>
+</html>
