@@ -62,13 +62,14 @@ button {
 
 .card {
   background: rgba(255,255,255,0.97);
-  padding: 18px;
-  margin: 18px 0;
+  padding: 20px;
+  margin: 20px 0;
   border-radius: 20px;
   animation: fadeIn 1s ease;
   box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-  font-size: 18px;
-  line-height: 1.5;
+  font-size: 20px;
+  line-height: 1.6;
+  text-align: center;
 }
 
 .card img {
@@ -139,7 +140,6 @@ input {
 
 <!-- MUSIC -->
 <audio id="music" autoplay loop>
-  <!-- Replace with Bollywood MP3 -->
   <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_3d5d1d40a7.mp3">
 </audio>
 
@@ -182,7 +182,7 @@ setInterval(()=>{
   setTimeout(()=>h.remove(),6000);
 },500);
 
-// Reasons list
+// Reasons
 const reasons=[
 "You came into my life and changed everything",
 "You care about all of us with your whole heart",
@@ -228,12 +228,11 @@ function revealNext(){
 
   const card=document.createElement("div");
   card.className="card";
-  card.innerHTML=`<b>${i+1}. ${reasons[i]}</b>
+  card.innerHTML=`${reasons[i]}
   <img src="https://picsum.photos/800/450?random=${i}">`;
 
   reasonsList.appendChild(card);
 
-  // guided scroll
   setTimeout(()=>card.scrollIntoView({behavior:"smooth",block:"center"}),100);
   setTimeout(()=>nextBtn.scrollIntoView({behavior:"smooth",block:"center"}),900);
 
