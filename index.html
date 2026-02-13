@@ -83,13 +83,11 @@ iframe {
   border-radius: 15px;
 }
 
-/* Fade animation */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(25px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Floating hearts */
 .heart {
   position: fixed;
   color: #ff4d6d;
@@ -101,7 +99,6 @@ iframe {
   to { transform: translateY(-10vh); opacity: 0; }
 }
 
-/* Password screen */
 #lock {
   position: fixed;
   inset: 0;
@@ -140,7 +137,7 @@ input {
 
 <!-- MUSIC -->
 <audio id="music" autoplay loop>
-	<source src="images/song.mp3" type="audio/mpeg">  
+  <source src="images/song.mp3" type="audio/mpeg">
 </audio>
 
 <div class="hero">
@@ -163,6 +160,7 @@ allowfullscreen></iframe>
 
 <script>
 const PASSWORD="amay";
+
 function unlock(){
   if(pw.value===PASSWORD) lock.style.display="none";
 }
@@ -172,7 +170,7 @@ function toggleMusic(){
   m.paused?m.play():m.pause();
 }
 
-// Floating hearts
+// floating hearts
 setInterval(()=>{
   const h=document.createElement("div");
   h.className="heart";
@@ -182,38 +180,38 @@ setInterval(()=>{
   setTimeout(()=>h.remove(),6000);
 },500);
 
-// Reasons
+// DATA STRUCTURE
 const reasons=[
-"You came into my life and changed everything",
-"You care about all of us with your whole heart",
-"You love me in a way no one else ever could",
-"You gave me the greatest gift of my life — Amay",
-"You are my strength on the hardest days",
-"You tolerate my nonsense and still smile",
-"You understand me without words",
-"Your kindness has no limits",
-"Your strength inspires me every day",
-"Your hug takes all my tensions away",
-"You make our home warm and happy",
-"You stand by me in every phase of life",
-"You believe in us even when things are tough",
-"Your patience amazes me",
-"You have the most beautiful heart",
-"You make me a better person",
-"You sacrifice without ever asking for credit",
-"You always put family first",
-"Your honesty keeps us grounded",
-"Your smile fixes everything",
-"You make tough days feel lighter",
-"You laugh with me like my best friend",
-"You grow with me instead of away from me",
-"You choose me every single day",
-"You have the gentlest soul",
-"Your courage inspires me",
-"You are my partner in everything",
-"You make life meaningful",
-"You are my best friend",
-"You are the love of my life"
+{ text:"You came into my life and changed everything", image:"Z61_1555.JPG" },
+{ text:"You care about all of us with your whole heart", image:"IMG_0493.jpg" },
+{ text:"You love me in a way no one else ever could", image:"DSC_8189.JPG" },
+{ text:"You gave me the greatest gift of my life — Amay", image:"dbf5c797-a5bd-4618-b2c4-21a4842c8fe6.JPG" },
+{ text:"You are my strength on the hardest days", image:"IMG_7381.jpg" },
+{ text:"You tolerate my nonsense and still smile", image:"IMG_7112.jpg" },
+{ text:"You understand me without words", image:"DSC_7782.JPG" },
+{ text:"Your kindness has no limits", image:"IMG-20220506-WA0000.jpg" },
+{ text:"Your strength inspires me every day", image:"IMG_7401.jpg" },
+{ text:"Your hug takes all my tensions away", image:"IMG_2457.jpg" },
+{ text:"You make our home warm and happy", image:"7a04efb1-47c6-4030-ad87-baaa4a5b1a23.JPG" },
+{ text:"You stand by me in every phase of life", image:"IMG_5110.jpg" },
+{ text:"You believe in us even when things are tough", image:"IMG_20210810_132106.JPG" },
+{ text:"Your patience amazes me", image:"IMG_7465.jpg" },
+{ text:"You have the most beautiful heart", image:"IMG_2788.JPG" },
+{ text:"You make me a better person", image:"IMG_7517.jpg" },
+{ text:"You sacrifice without ever asking for credit", image:"ebb3d9ab-293e-4c50-8a07-e12e7bae3bd8.JPG" },
+{ text:"You always put family first", image:"20210809_125958.JPG" },
+{ text:"Your honesty keeps us grounded", image:"IMG_2773.JPG" },
+{ text:"Your smile fixes everything", image:"20210911_121627.JPG" },
+{ text:"You make tough days feel lighter", image:"20210215_160850.JPG" },
+{ text:"You laugh with me like my best friend", image:"DSC_7842.JPG" },
+{ text:"You grow with me instead of away from me", image:"IMG_0359_Original.jpg" },
+{ text:"You choose me every single day", image:"IMG_8773.jpg" },
+{ text:"You have the gentlest soul", image:"_MG_7149.JPG" },
+{ text:"Your courage inspires me", image:"eb2c2049-3e24-4782-a011-6a21cdf1c925.jpg" },
+{ text:"You are my partner in everything", image:"DSC_8238.JPG" },
+{ text:"You make life meaningful", image:"IMG_3202-1.JPG" },
+{ text:"You are my best friend", image:"Z61_8818.JPG" },
+{ text:"You are the love of my life", image:"_MG_6163.JPG" }
 ];
 
 let i=0;
@@ -228,8 +226,10 @@ function revealNext(){
 
   const card=document.createElement("div");
   card.className="card";
-  card.innerHTML=`${reasons[i]}
-  <img src="https://picsum.photos/800/450?random=${i}">`;
+  card.innerHTML=`
+    ${reasons[i].text}
+    <img src="images/${reasons[i].image}">
+  `;
 
   reasonsList.appendChild(card);
 
