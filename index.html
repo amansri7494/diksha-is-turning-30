@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-
 <title>Happy Birthday Diksha ❤️</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
@@ -58,12 +57,9 @@ input {
   text-align:center;
 }
 
-/* SLIDES */
+/* Slides */
 
-#slides {
-  padding:0;
-  overflow:hidden;
-}
+#slides { padding:0; overflow:hidden; }
 
 .slide-bg {
   position:absolute;
@@ -71,7 +67,11 @@ input {
   height:100%;
   object-fit:cover;
   filter:brightness(0.75);
+  opacity:0;
+  transition:opacity .4s ease;
 }
+
+.slide-bg.show { opacity:1; }
 
 .overlay {
   position:absolute;
@@ -97,7 +97,6 @@ input {
   transition:width .3s;
 }
 
-/* Tap zones */
 .zone {
   position:absolute;
   top:0;
@@ -108,8 +107,12 @@ input {
 #leftZone { left:0; }
 #rightZone { right:0; }
 
-iframe {
-  border-radius:20px;
+iframe { border-radius:20px; }
+
+.loading {
+  position:absolute;
+  color:#8b004b;
+  font-size:16px;
 }
 </style>
 </head>
@@ -126,7 +129,11 @@ iframe {
 
 <div id="welcome" class="page hidden">
   <h1>Happy 30th Birthday Diksha</h1>
-  <p>You are my forever and always ❤️</p>
+  <p>
+    You are my forever and always — my peace, my home, my best friend,
+    and the love I choose every single day. Growing old with you is my
+    favorite dream come true ❤️
+  </p>
   <button onclick="toggleMusic()">Play / Pause Music</button>
   <button onclick="goReasons()">Next</button>
 </div>
@@ -134,6 +141,7 @@ iframe {
 <div id="intro" class="page hidden">
   <h1>30 reasons why I love you</h1>
   <button onclick="startSlides()">Let’s begin</button>
+  <div class="loading" id="loading">Loading memories… ❤️</div>
 </div>
 
 <div id="slides" class="page hidden">
@@ -151,8 +159,8 @@ iframe {
     height="60%"
     src=""
     allow="autoplay; encrypted-media"
-    allowfullscreen>
-  </iframe>
+    allowfullscreen></iframe>
+  <button onclick="backToSlides()">Back</button>
 </div>
 
 <script>
@@ -194,15 +202,30 @@ const reasons=[
 let index=0;
 const music=document.getElementById("music");
 
+/* ---------- preload images ---------- */
+
+let loaded=0;
+reasons.forEach(r=>{
+  const img=new Image();
+  img.src="images/"+r.image;
+  img.onload=()=>{
+    loaded++;
+    if(loaded===reasons.length)
+      document.getElementById("loading").innerText="Ready ❤️";
+  };
+});
+
+/* ---------- navigation ---------- */
+
 function show(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
   document.getElementById(id).classList.remove("hidden");
 }
 
 function unlock(){
-  if(document.getElementById("password").value===PASSWORD){
+  if(document.getElementById("password").value===PASSWORD)
     show("welcome");
-  } else alert("Wrong password ❤️");
+  else alert("Wrong password ❤️");
 }
 
 function toggleMusic(){
@@ -216,16 +239,24 @@ function startSlides(){
   renderSlide();
 }
 
+/* ---------- slides ---------- */
+
 function renderSlide(){
   if(index<0) index=0;
-
   if(index>=reasons.length){
     showSurprise();
     return;
   }
 
   const r=reasons[index];
-  document.getElementById("slideBg").src="images/"+r.image;
+  const bg=document.getElementById("slideBg");
+
+  bg.classList.remove("show");
+  setTimeout(()=>{
+    bg.src="images/"+r.image;
+    bg.onload=()=>bg.classList.add("show");
+  },100);
+
   document.getElementById("slideText").innerText=r.text;
   document.getElementById("progress").style.width=((index+1)/reasons.length*100)+"%";
 }
@@ -250,11 +281,20 @@ slides.addEventListener("touchend",e=>{
   if(dx>30) prev();
 });
 
+/* ---------- surprise ---------- */
+
 function showSurprise(){
   show("surprise");
   music.pause();
   document.getElementById("yt").src=
-  "https://www.youtube.com/embed/5zbb1k03uhM?autoplay=1";
+    "https://www.youtube.com/embed/5zbb1k03uhM?autoplay=1";
+}
+
+function backToSlides(){
+  document.getElementById("yt").src="";
+  index=reasons.length-1;
+  show("slides");
+  renderSlide();
 }
 </script>
 
