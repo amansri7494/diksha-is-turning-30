@@ -16,7 +16,7 @@ body {
   color: white;
 }
 
-/* PASSWORD */
+/* PASSWORD SCREEN */
 #lock {
   position: fixed;
   inset: 0;
@@ -34,16 +34,16 @@ body {
   inset: 0;
   opacity: 0;
   transition: opacity 1s ease;
-  background-size: cover;
-  background-position: center;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-size: cover;
+  background-position: center;
 }
 
 .slide.active { opacity: 1; }
 
-/* Romantic intro gradient */
+/* INTRO GRADIENT */
 .intro {
   background: linear-gradient(-45deg,#ff9a9e,#fad0c4,#fbc2eb,#a18cd1);
   background-size: 400% 400%;
@@ -58,7 +58,7 @@ body {
 
 .caption {
   background: rgba(0,0,0,0.45);
-  padding: 25px 30px;
+  padding: 25px;
   border-radius: 20px;
   font-size: 28px;
   text-align: center;
@@ -73,11 +73,10 @@ body {
   border: none;
   background: #ff4d6d;
   color: white;
-  font-size: 16px;
   cursor: pointer;
 }
 
-/* SURPRISE */
+/* VIDEO SCREEN */
 #surprise {
   position: fixed;
   inset: 0;
@@ -95,7 +94,6 @@ body {
   border: none;
   background: #ff4d6d;
   color: white;
-  font-size: 16px;
   cursor: pointer;
 }
 </style>
@@ -120,10 +118,10 @@ body {
 <!-- SLIDES -->
 <div id="slides"></div>
 
-<!-- SURPRISE -->
+<!-- VIDEO -->
 <div id="surprise">
   <div id="ytplayer"></div>
-  <button id="backBtn" onclick="backToSlides()">← Back to memories</button>
+  <button id="backBtn">← Back to memories</button>
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
@@ -132,6 +130,7 @@ body {
 const PASSWORD="amay";
 const music=document.getElementById("music");
 const slidesContainer=document.getElementById("slides");
+const surprise=document.getElementById("surprise");
 
 /* PASSWORD */
 function unlock(){
@@ -144,6 +143,7 @@ function unlock(){
 /* DATA */
 const reasons=[
 { text:"Happy Birthday My Love ❤️", intro:true },
+{ text:"30 reasons why I love you ❤️", intro:true },
 
 { text:"You came into my life and changed everything", image:"Z61_1555.JPG" },
 { text:"You care about all of us with your whole heart", image:"IMG_0493_1.jpg" },
@@ -179,19 +179,17 @@ const reasons=[
 
 let current=0;
 
-/* build slides */
-reasons.forEach(r=>{
+/* BUILD SLIDES */
+reasons.forEach((r,i)=>{
   const s=document.createElement("div");
   s.className="slide";
 
   if(r.intro){
     s.classList.add("intro");
-    s.innerHTML=`
-      <div class="caption">
-        ${r.text}
-        <br>
-        <button class="musicBtn">🔊 Toggle Music</button>
-      </div>`;
+    s.innerHTML=`<div class="caption">
+      ${r.text}
+      ${i===0 ? '<br><button class="musicBtn">🔊 Music</button>' : ''}
+    </div>`;
   } else {
     s.style.backgroundImage=`url(images/${r.image})`;
     s.innerHTML=`<div class="caption">${r.text}</div>`;
@@ -200,7 +198,7 @@ reasons.forEach(r=>{
   slidesContainer.appendChild(s);
 });
 
-/* music button safe click */
+/* MUSIC BUTTON */
 slidesContainer.addEventListener("click", e=>{
   if(e.target.classList.contains("musicBtn")){
     e.stopPropagation();
@@ -208,12 +206,13 @@ slidesContainer.addEventListener("click", e=>{
   }
 });
 
-/* navigation */
+/* SHOW SLIDE */
 function showSlide(i){
   document.querySelectorAll(".slide").forEach(s=>s.classList.remove("active"));
   document.querySelectorAll(".slide")[i].classList.add("active");
 }
 
+/* NAVIGATION */
 function next(){
   if(current<reasons.length-1){
     current++;
@@ -231,7 +230,7 @@ function prev(){
   }
 }
 
-/* click nav */
+/* CLICK NAV */
 document.body.addEventListener("click", e=>{
   if(surprise.style.display==="flex") return;
   if(e.target.classList.contains("musicBtn")) return;
@@ -239,7 +238,7 @@ document.body.addEventListener("click", e=>{
   x<0.4 ? prev() : next();
 });
 
-/* swipe */
+/* SWIPE */
 let startX=0;
 document.addEventListener("touchstart", e=>startX=e.touches[0].clientX);
 document.addEventListener("touchend", e=>{
@@ -249,14 +248,7 @@ document.addEventListener("touchend", e=>{
   if(startX-endX>50) next();
 });
 
-/* back */
-function backToSlides(){
-  surprise.style.display="none";
-  slidesContainer.style.display="block";
-  showSlide(current);
-}
-
-/* YouTube */
+/* YOUTUBE */
 let player;
 function onYouTubeIframeAPIReady(){
   player=new YT.Player('ytplayer',{
@@ -268,6 +260,14 @@ function onYouTubeIframeAPIReady(){
     }}
   });
 }
+
+/* BACK FROM VIDEO */
+document.getElementById("backBtn").onclick=()=>{
+  if(player) player.stopVideo();
+  surprise.style.display="none";
+  slidesContainer.style.display="block";
+  showSlide(current);
+};
 </script>
 
 </body>
