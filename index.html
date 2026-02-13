@@ -22,29 +22,10 @@ body {
   inset: 0;
   background: #ffdde1;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   z-index: 999;
-}
-
-/* INTRO */
-#intro {
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(135deg,#ffdde1,#ee9ca7);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  text-align: center;
-  cursor: pointer;
-}
-
-#intro h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(60px, 10vw, 120px);
-  margin: 0;
 }
 
 /* SLIDES */
@@ -70,6 +51,17 @@ body {
   text-align: center;
   max-width: 80%;
   font-family: 'Playfair Display', serif;
+}
+
+.musicBtn {
+  margin-top: 20px;
+  padding: 12px 20px;
+  border-radius: 20px;
+  border: none;
+  background: #ff4d6d;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
 }
 
 /* SURPRISE */
@@ -107,12 +99,6 @@ body {
   </form>
 </div>
 
-<!-- INTRO -->
-<div id="intro">
-  <h1>Happy Birthday My Love ❤️</h1>
-  <p>Tap to begin…</p>
-</div>
-
 <!-- MUSIC -->
 <audio id="music" loop>
   <source src="images/song.mp3" type="audio/mpeg">
@@ -132,23 +118,20 @@ body {
 <script>
 const PASSWORD="amay";
 const music=document.getElementById("music");
+const slidesContainer=document.getElementById("slides");
 
+/* PASSWORD */
 function unlock(){
   if(pw.value===PASSWORD){
     lock.style.display="none";
-    intro.style.display="flex";
+    showSlide(0);
   }
 }
 
-/* intro click */
-intro.addEventListener("click", ()=>{
-  intro.style.display="none";
-  music.play(); // allowed because user interaction
-  showSlide(0);
-});
+/* DATA — slide 0 is birthday intro */
+const reasons=[
+{ text:"Happy Birthday My Love ❤️", image:"Z61_1555.JPG", intro:true },
 
-/* DATA */
-const reasons=[ /* unchanged list */
 { text:"You came into my life and changed everything", image:"Z61_1555.JPG" },
 { text:"You care about all of us with your whole heart", image:"IMG_0493_1.jpg" },
 { text:"You love me in a way no one else ever could", image:"DSC_8189.JPG" },
@@ -183,12 +166,19 @@ const reasons=[ /* unchanged list */
 
 let current=0;
 
+/* build slides */
 reasons.forEach(r=>{
   const s=document.createElement("div");
   s.className="slide";
   s.style.backgroundImage=`url(images/${r.image})`;
-  s.innerHTML=`<div class="caption">${r.text}</div>`;
-  slides.appendChild(s);
+
+  let extra="";
+  if(r.intro){
+    extra=`<button class="musicBtn" onclick="toggleMusic(event)">🔊 Music</button>`;
+  }
+
+  s.innerHTML=`<div class="caption">${r.text}${extra}</div>`;
+  slidesContainer.appendChild(s);
 });
 
 function showSlide(i){
@@ -196,12 +186,13 @@ function showSlide(i){
   document.querySelectorAll(".slide")[i].classList.add("active");
 }
 
+/* navigation */
 function next(){
   if(current<reasons.length-1){
     current++;
     showSlide(current);
   } else {
-    slides.style.display="none";
+    slidesContainer.style.display="none";
     surprise.style.display="flex";
   }
 }
@@ -213,9 +204,10 @@ function prev(){
   }
 }
 
-/* click navigation only when slides visible */
+/* click nav */
 document.body.addEventListener("click", e=>{
-  if(intro.style.display==="flex" || surprise.style.display==="flex") return;
+  if(surprise.style.display==="flex") return;
+  if(e.target.tagName==="BUTTON") return;
   const x=e.clientX/window.innerWidth;
   x<0.4 ? prev() : next();
 });
@@ -230,12 +222,17 @@ document.addEventListener("touchend", e=>{
   if(startX-endX>50) next();
 });
 
+/* music button */
+function toggleMusic(e){
+  e.stopPropagation();
+  music.paused ? music.play() : music.pause();
+}
+
 /* back from video */
 function backToSlides(){
   surprise.style.display="none";
-  slides.style.display="block";
+  slidesContainer.style.display="block";
   showSlide(current);
-  music.play();
 }
 
 /* YouTube API */
