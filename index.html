@@ -43,6 +43,19 @@ body {
 
 .slide.active { opacity: 1; }
 
+/* Romantic intro gradient */
+.intro {
+  background: linear-gradient(-45deg,#ff9a9e,#fad0c4,#fbc2eb,#a18cd1);
+  background-size: 400% 400%;
+  animation: gradient 12s ease infinite;
+}
+
+@keyframes gradient {
+  0% {background-position:0% 50%}
+  50% {background-position:100% 50%}
+  100% {background-position:0% 50%}
+}
+
 .caption {
   background: rgba(0,0,0,0.45);
   padding: 25px 30px;
@@ -128,9 +141,9 @@ function unlock(){
   }
 }
 
-/* DATA — slide 0 is birthday intro */
+/* DATA */
 const reasons=[
-{ text:"Happy Birthday My Love ❤️", image:"Z61_1555.JPG", intro:true },
+{ text:"Happy Birthday My Love ❤️", intro:true },
 
 { text:"You came into my life and changed everything", image:"Z61_1555.JPG" },
 { text:"You care about all of us with your whole heart", image:"IMG_0493_1.jpg" },
@@ -170,23 +183,37 @@ let current=0;
 reasons.forEach(r=>{
   const s=document.createElement("div");
   s.className="slide";
-  s.style.backgroundImage=`url(images/${r.image})`;
 
-  let extra="";
   if(r.intro){
-    extra=`<button class="musicBtn" onclick="toggleMusic(event)">🔊 Music</button>`;
+    s.classList.add("intro");
+    s.innerHTML=`
+      <div class="caption">
+        ${r.text}
+        <br>
+        <button class="musicBtn">🔊 Toggle Music</button>
+      </div>`;
+  } else {
+    s.style.backgroundImage=`url(images/${r.image})`;
+    s.innerHTML=`<div class="caption">${r.text}</div>`;
   }
 
-  s.innerHTML=`<div class="caption">${r.text}${extra}</div>`;
   slidesContainer.appendChild(s);
 });
 
+/* music button safe click */
+slidesContainer.addEventListener("click", e=>{
+  if(e.target.classList.contains("musicBtn")){
+    e.stopPropagation();
+    music.paused ? music.play() : music.pause();
+  }
+});
+
+/* navigation */
 function showSlide(i){
   document.querySelectorAll(".slide").forEach(s=>s.classList.remove("active"));
   document.querySelectorAll(".slide")[i].classList.add("active");
 }
 
-/* navigation */
 function next(){
   if(current<reasons.length-1){
     current++;
@@ -207,7 +234,7 @@ function prev(){
 /* click nav */
 document.body.addEventListener("click", e=>{
   if(surprise.style.display==="flex") return;
-  if(e.target.tagName==="BUTTON") return;
+  if(e.target.classList.contains("musicBtn")) return;
   const x=e.clientX/window.innerWidth;
   x<0.4 ? prev() : next();
 });
@@ -222,20 +249,14 @@ document.addEventListener("touchend", e=>{
   if(startX-endX>50) next();
 });
 
-/* music button */
-function toggleMusic(e){
-  e.stopPropagation();
-  music.paused ? music.play() : music.pause();
-}
-
-/* back from video */
+/* back */
 function backToSlides(){
   surprise.style.display="none";
   slidesContainer.style.display="block";
   showSlide(current);
 }
 
-/* YouTube API */
+/* YouTube */
 let player;
 function onYouTubeIframeAPIReady(){
   player=new YT.Player('ytplayer',{
