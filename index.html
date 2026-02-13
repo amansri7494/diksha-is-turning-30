@@ -23,7 +23,7 @@ body {
 
 h1 {
   font-family: 'Playfair Display', serif;
-  font-size: 52px;
+  font-size: clamp(56px, 9vw, 110px);
   text-align: center;
   margin: 0;
 }
@@ -78,11 +78,6 @@ button {
   margin-top: 12px;
 }
 
-iframe {
-  width: 100%;
-  border-radius: 15px;
-}
-
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(25px); }
   to { opacity: 1; transform: translateY(0); }
@@ -131,8 +126,10 @@ input {
 <!-- PASSWORD LOCK -->
 <div id="lock">
   <h2>Enter the secret ❤️</h2>
-  <input type="password" id="pw">
-  <button onclick="unlock()">Unlock</button>
+  <form onsubmit="unlock(); return false;">
+    <input type="password" id="pw" placeholder="Password">
+    <button type="submit">Unlock</button>
+  </form>
 </div>
 
 <!-- MUSIC -->
@@ -153,10 +150,10 @@ input {
 
 <section id="surprise">
 <h2>One Last Surprise 💌</h2>
-<iframe height="400"
-src="https://www.youtube.com/embed/5zbb1k03uhM"
-allowfullscreen></iframe>
+<div id="ytplayer"></div>
 </section>
+
+<script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
 const PASSWORD="amay";
@@ -170,7 +167,7 @@ function toggleMusic(){
   m.paused?m.play():m.pause();
 }
 
-// floating hearts
+// Floating hearts
 setInterval(()=>{
   const h=document.createElement("div");
   h.className="heart";
@@ -180,7 +177,27 @@ setInterval(()=>{
   setTimeout(()=>h.remove(),6000);
 },500);
 
-// DATA STRUCTURE
+// YouTube Player API
+let player;
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('ytplayer', {
+    height: '400',
+    width: '100%',
+    videoId: '5zbb1k03uhM',
+    events: {
+      'onStateChange': onPlayerStateChange
+    }
+  });
+}
+
+function onPlayerStateChange(event) {
+  const music=document.getElementById("music");
+  if(event.data===YT.PlayerState.PLAYING){
+    music.pause();
+  }
+}
+
+// Reasons data
 const reasons=[
 { text:"You came into my life and changed everything", image:"Z61_1555.JPG" },
 { text:"You care about all of us with your whole heart", image:"IMG_0493_1.jpg" },
