@@ -16,7 +16,6 @@ body {
   color: white;
 }
 
-/* PASSWORD SCREEN */
 #lock {
   position: fixed;
   inset: 0;
@@ -28,12 +27,16 @@ body {
   z-index: 999;
 }
 
-/* SLIDES */
-.slide {
+#slides {
   position: fixed;
   inset: 0;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
   opacity: 0;
-  transition: opacity 1s ease;
+  transition: opacity 0.8s ease;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -43,7 +46,6 @@ body {
 
 .slide.active { opacity: 1; }
 
-/* INTRO GRADIENT */
 .intro {
   background: linear-gradient(-45deg,#ff9a9e,#fad0c4,#fbc2eb,#a18cd1);
   background-size: 400% 400%;
@@ -74,9 +76,9 @@ body {
   background: #ff4d6d;
   color: white;
   cursor: pointer;
+  font-size: 16px;
 }
 
-/* VIDEO SCREEN */
 #surprise {
   position: fixed;
   inset: 0;
@@ -101,7 +103,6 @@ body {
 
 <body>
 
-<!-- PASSWORD -->
 <div id="lock">
   <h2>Enter the secret ❤️</h2>
   <form onsubmit="unlock(); return false;">
@@ -110,15 +111,12 @@ body {
   </form>
 </div>
 
-<!-- MUSIC -->
 <audio id="music" loop>
   <source src="images/song.mp3" type="audio/mpeg">
 </audio>
 
-<!-- SLIDES -->
 <div id="slides"></div>
 
-<!-- VIDEO -->
 <div id="surprise">
   <div id="ytplayer"></div>
   <button id="backBtn">← Back to memories</button>
@@ -129,10 +127,9 @@ body {
 <script>
 const PASSWORD="amay";
 const music=document.getElementById("music");
-const slidesContainer=document.getElementById("slides");
+const slides=document.getElementById("slides");
 const surprise=document.getElementById("surprise");
 
-/* PASSWORD */
 function unlock(){
   if(pw.value===PASSWORD){
     lock.style.display="none";
@@ -140,7 +137,6 @@ function unlock(){
   }
 }
 
-/* DATA */
 const reasons=[
 { text:"Happy Birthday My Love ❤️", intro:true },
 { text:"30 reasons why I love you ❤️", intro:true },
@@ -179,7 +175,6 @@ const reasons=[
 
 let current=0;
 
-/* BUILD SLIDES */
 reasons.forEach((r,i)=>{
   const s=document.createElement("div");
   s.className="slide";
@@ -188,37 +183,40 @@ reasons.forEach((r,i)=>{
     s.classList.add("intro");
     s.innerHTML=`<div class="caption">
       ${r.text}
-      ${i===0 ? '<br><button class="musicBtn">🔊 Music</button>' : ''}
+      ${i===0?'<br><button class="musicBtn">🔊 Toggle Music</button>':''}
     </div>`;
   } else {
     s.style.backgroundImage=`url(images/${r.image})`;
     s.innerHTML=`<div class="caption">${r.text}</div>`;
   }
 
-  slidesContainer.appendChild(s);
+  slides.appendChild(s);
 });
 
-/* MUSIC BUTTON */
-slidesContainer.addEventListener("click", e=>{
+slides.addEventListener("click", e=>{
   if(e.target.classList.contains("musicBtn")){
     e.stopPropagation();
-    music.paused ? music.play() : music.pause();
+    music.paused?music.play():music.pause();
+    return;
   }
+
+  if(surprise.style.display==="flex") return;
+
+  const x=e.clientX/window.innerWidth;
+  x<0.4?prev():next();
 });
 
-/* SHOW SLIDE */
 function showSlide(i){
   document.querySelectorAll(".slide").forEach(s=>s.classList.remove("active"));
   document.querySelectorAll(".slide")[i].classList.add("active");
 }
 
-/* NAVIGATION */
 function next(){
   if(current<reasons.length-1){
     current++;
     showSlide(current);
   } else {
-    slidesContainer.style.display="none";
+    slides.style.display="none";
     surprise.style.display="flex";
   }
 }
@@ -230,25 +228,6 @@ function prev(){
   }
 }
 
-/* CLICK NAV */
-document.body.addEventListener("click", e=>{
-  if(surprise.style.display==="flex") return;
-  if(e.target.classList.contains("musicBtn")) return;
-  const x=e.clientX/window.innerWidth;
-  x<0.4 ? prev() : next();
-});
-
-/* SWIPE */
-let startX=0;
-document.addEventListener("touchstart", e=>startX=e.touches[0].clientX);
-document.addEventListener("touchend", e=>{
-  if(surprise.style.display==="flex") return;
-  let endX=e.changedTouches[0].clientX;
-  if(endX-startX>50) prev();
-  if(startX-endX>50) next();
-});
-
-/* YOUTUBE */
 let player;
 function onYouTubeIframeAPIReady(){
   player=new YT.Player('ytplayer',{
@@ -261,11 +240,10 @@ function onYouTubeIframeAPIReady(){
   });
 }
 
-/* BACK FROM VIDEO */
 document.getElementById("backBtn").onclick=()=>{
   if(player) player.stopVideo();
   surprise.style.display="none";
-  slidesContainer.style.display="block";
+  slides.style.display="block";
   showSlide(current);
 };
 </script>
