@@ -3,14 +3,16 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
 <title>Happy Birthday Diksha ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
 
 <style>
 body {
   margin:0;
-  font-family: system-ui, -apple-system, sans-serif;
-  background:#000;
-  color:white;
+  font-family:'Poppins', sans-serif;
+  background:linear-gradient(180deg,#ffe4ec,#fff6f9);
   overflow:hidden;
 }
 
@@ -25,21 +27,28 @@ body {
   text-align:center;
   padding:20px;
   box-sizing:border-box;
-  background:linear-gradient(180deg,#120014,#000);
 }
 
 .hidden { display:none; }
 
-h1 { font-size:32px; margin-bottom:10px; }
-p { font-size:18px; opacity:0.9; }
+h1 {
+  font-family:'Playfair Display', serif;
+  font-size:32px;
+  color:#8b004b;
+}
 
-button, input {
+p {
+  font-size:18px;
+  color:#4a0030;
+}
+
+button,input {
   margin-top:20px;
-  padding:14px 20px;
+  padding:14px 22px;
   font-size:16px;
   border:none;
   border-radius:30px;
-  background:#ff2e86;
+  background:#ff4f91;
   color:white;
 }
 
@@ -49,25 +58,58 @@ input {
   text-align:center;
 }
 
-.slide-img {
-  width:100%;
-  height:65%;
-  object-fit:cover;
-  border-radius:20px;
+/* SLIDES */
+
+#slides {
+  padding:0;
+  overflow:hidden;
 }
 
-.slide-text {
-  font-size:20px;
-  margin-top:15px;
+.slide-bg {
+  position:absolute;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  filter:brightness(0.75);
+}
+
+.overlay {
+  position:absolute;
+  bottom:40px;
+  left:20px;
+  right:20px;
+  color:white;
+  font-size:22px;
+  font-family:'Playfair Display', serif;
+  backdrop-filter:blur(8px);
+  background:rgba(0,0,0,0.35);
+  padding:20px;
+  border-radius:20px;
 }
 
 .progress {
   position:absolute;
   top:0;
   left:0;
-  height:4px;
-  background:#ff2e86;
+  height:5px;
+  background:#ff4f91;
   width:0%;
+  transition:width .3s;
+}
+
+/* Tap zones */
+.zone {
+  position:absolute;
+  top:0;
+  width:50%;
+  height:100%;
+}
+
+#leftZone { left:0; }
+#rightZone { right:0; }
+
+iframe {
+  border-radius:20px;
 }
 </style>
 </head>
@@ -77,7 +119,7 @@ input {
 <audio id="music" src="images/song.mp3" loop></audio>
 
 <div id="landing" class="page">
-  <h1>Happy Birthday Diksha! ❤️</h1>
+  <h1>Happy Birthday Diksha ❤️</h1>
   <input id="password" type="password" placeholder="Enter password" />
   <button onclick="unlock()">Unlock</button>
 </div>
@@ -96,8 +138,10 @@ input {
 
 <div id="slides" class="page hidden">
   <div class="progress" id="progress"></div>
-  <img id="slideImg" class="slide-img"/>
-  <div id="slideText" class="slide-text"></div>
+  <img id="slideBg" class="slide-bg">
+  <div id="slideText" class="overlay"></div>
+  <div id="leftZone" class="zone"></div>
+  <div id="rightZone" class="zone"></div>
 </div>
 
 <div id="surprise" class="page hidden">
@@ -106,7 +150,6 @@ input {
     width="100%"
     height="60%"
     src=""
-    frameborder="0"
     allow="autoplay; encrypted-media"
     allowfullscreen>
   </iframe>
@@ -174,39 +217,44 @@ function startSlides(){
 }
 
 function renderSlide(){
+  if(index<0) index=0;
+
   if(index>=reasons.length){
     showSurprise();
     return;
   }
+
   const r=reasons[index];
-  document.getElementById("slideImg").src="images/"+r.image;
+  document.getElementById("slideBg").src="images/"+r.image;
   document.getElementById("slideText").innerText=r.text;
   document.getElementById("progress").style.width=((index+1)/reasons.length*100)+"%";
 }
 
-function next(){
-  index++;
-  renderSlide();
-}
+function next(){ index++; renderSlide(); }
+function prev(){ index--; renderSlide(); }
 
+document.getElementById("rightZone").onclick=next;
+document.getElementById("leftZone").onclick=prev;
+
+/* swipe */
 let startX=0;
-document.getElementById("slides").addEventListener("touchstart",e=>{
+const slides=document.getElementById("slides");
+
+slides.addEventListener("touchstart",e=>{
   startX=e.touches[0].clientX;
 });
 
-document.getElementById("slides").addEventListener("touchend",e=>{
+slides.addEventListener("touchend",e=>{
   let dx=e.changedTouches[0].clientX-startX;
-  if(Math.abs(dx)>30) next();
-  else next();
+  if(dx<-30) next();
+  if(dx>30) prev();
 });
-
-document.getElementById("slides").addEventListener("click",next);
 
 function showSurprise(){
   show("surprise");
   music.pause();
   document.getElementById("yt").src=
-    "https://www.youtube.com/embed/5zbb1k03uhM?autoplay=1";
+  "https://www.youtube.com/embed/5zbb1k03uhM?autoplay=1";
 }
 </script>
 
