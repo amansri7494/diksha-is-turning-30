@@ -16,7 +16,7 @@ body {
   color: white;
 }
 
-/* password screen */
+/* PASSWORD */
 #lock {
   position: fixed;
   inset: 0;
@@ -36,7 +36,25 @@ input {
   font-size: 18px;
 }
 
-/* slide scene */
+/* INTRO */
+#intro {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg,#ffdde1,#ee9ca7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+#intro h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(60px, 10vw, 120px);
+  margin: 0;
+}
+
+/* SLIDES */
 .slide {
   position: fixed;
   inset: 0;
@@ -49,11 +67,8 @@ input {
   align-items: center;
 }
 
-.slide.active {
-  opacity: 1;
-}
+.slide.active { opacity: 1; }
 
-/* text overlay */
 .caption {
   background: rgba(0,0,0,0.45);
   padding: 25px 30px;
@@ -64,7 +79,6 @@ input {
   font-family: 'Playfair Display', serif;
 }
 
-/* tap hint */
 .tap {
   position: absolute;
   bottom: 30px;
@@ -72,7 +86,7 @@ input {
   opacity: 0.7;
 }
 
-/* surprise video */
+/* SURPRISE */
 #surprise {
   position: fixed;
   inset: 0;
@@ -95,12 +109,18 @@ input {
   </form>
 </div>
 
+<!-- INTRO -->
+<div id="intro" onclick="startShow()">
+  <h1>Happy Birthday My Love ❤️</h1>
+  <p>Tap to begin the story…</p>
+</div>
+
 <!-- MUSIC -->
-<audio id="music" autoplay loop>
+<audio id="music" loop>
   <source src="images/song.mp3" type="audio/mpeg">
 </audio>
 
-<!-- SLIDE CONTAINER -->
+<!-- SLIDES -->
 <div id="slides"></div>
 
 <!-- SURPRISE -->
@@ -116,13 +136,14 @@ const PASSWORD="amay";
 function unlock(){
   if(pw.value===PASSWORD){
     lock.style.display="none";
-    showSlide(0);
+    intro.style.display="flex";
   }
 }
 
-function toggleMusic(){
-  const m=document.getElementById("music");
-  m.paused?m.play():m.pause();
+function startShow(){
+  intro.style.display="none";
+  document.getElementById("music").play();
+  showSlide(0);
 }
 
 // DATA
@@ -159,16 +180,15 @@ const reasons=[
 { text:"You are the love of my life", image:"IMG_6163.JPG" }
 ];
 
-let current = 0;
+let current=0;
 
 // build slides
-reasons.forEach((r,i)=>{
+reasons.forEach(r=>{
   const s=document.createElement("div");
   s.className="slide";
   s.style.backgroundImage=`url(images/${r.image})`;
   s.innerHTML=`<div class="caption">${r.text}</div>
-               <div class="tap">Tap to continue ❤️</div>`;
-  s.onclick=next;
+               <div class="tap">Tap right → next | Tap left → back</div>`;
   slides.appendChild(s);
 });
 
@@ -178,8 +198,8 @@ function showSlide(i){
 }
 
 function next(){
-  current++;
-  if(current<reasons.length){
+  if(current<reasons.length-1){
+    current++;
     showSlide(current);
   } else {
     slides.style.display="none";
@@ -187,14 +207,43 @@ function next(){
   }
 }
 
-// YouTube API
+function prev(){
+  if(current>0){
+    current--;
+    showSlide(current);
+  }
+}
+
+/* click zones */
+document.body.addEventListener("click", e=>{
+  const x=e.clientX/window.innerWidth;
+  if(x<0.4) prev();
+  else next();
+});
+
+/* keyboard */
+document.addEventListener("keydown", e=>{
+  if(e.key==="ArrowRight") next();
+  if(e.key==="ArrowLeft") prev();
+});
+
+/* swipe */
+let startX=0;
+document.addEventListener("touchstart", e=>startX=e.touches[0].clientX);
+document.addEventListener("touchend", e=>{
+  let endX=e.changedTouches[0].clientX;
+  if(endX-startX>50) prev();
+  if(startX-endX>50) next();
+});
+
+/* YouTube API */
 let player;
-function onYouTubeIframeAPIReady() {
-  player = new YT.Player('ytplayer', {
-    height: '80%',
-    width: '80%',
-    videoId: '5zbb1k03uhM',
-    events: { onStateChange: e=>{
+function onYouTubeIframeAPIReady(){
+  player=new YT.Player('ytplayer',{
+    height:'80%',
+    width:'80%',
+    videoId:'5zbb1k03uhM',
+    events:{onStateChange:e=>{
       if(e.data===YT.PlayerState.PLAYING)
         document.getElementById("music").pause();
     }}
