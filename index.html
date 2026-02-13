@@ -28,14 +28,6 @@ body {
   z-index: 999;
 }
 
-input {
-  padding: 14px;
-  border-radius: 10px;
-  border: none;
-  margin: 10px;
-  font-size: 18px;
-}
-
 /* INTRO */
 #intro {
   position: fixed;
@@ -46,6 +38,7 @@ input {
   align-items: center;
   flex-direction: column;
   text-align: center;
+  cursor: pointer;
 }
 
 #intro h1 {
@@ -79,21 +72,26 @@ input {
   font-family: 'Playfair Display', serif;
 }
 
-.tap {
-  position: absolute;
-  bottom: 30px;
-  font-size: 14px;
-  opacity: 0.7;
-}
-
 /* SURPRISE */
 #surprise {
   position: fixed;
   inset: 0;
   background: black;
   display: none;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+#backBtn {
+  margin-top: 20px;
+  padding: 12px 20px;
+  border-radius: 20px;
+  border: none;
+  background: #ff4d6d;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
 }
 </style>
 </head>
@@ -110,9 +108,9 @@ input {
 </div>
 
 <!-- INTRO -->
-<div id="intro" onclick="startShow()">
+<div id="intro">
   <h1>Happy Birthday My Love ❤️</h1>
-  <p>Tap to begin the story…</p>
+  <p>Tap to begin…</p>
 </div>
 
 <!-- MUSIC -->
@@ -126,12 +124,14 @@ input {
 <!-- SURPRISE -->
 <div id="surprise">
   <div id="ytplayer"></div>
+  <button id="backBtn" onclick="backToSlides()">← Back to memories</button>
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
 const PASSWORD="amay";
+const music=document.getElementById("music");
 
 function unlock(){
   if(pw.value===PASSWORD){
@@ -140,14 +140,15 @@ function unlock(){
   }
 }
 
-function startShow(){
+/* intro click */
+intro.addEventListener("click", ()=>{
   intro.style.display="none";
-  document.getElementById("music").play();
+  music.play(); // allowed because user interaction
   showSlide(0);
-}
+});
 
-// DATA
-const reasons=[
+/* DATA */
+const reasons=[ /* unchanged list */
 { text:"You came into my life and changed everything", image:"Z61_1555.JPG" },
 { text:"You care about all of us with your whole heart", image:"IMG_0493_1.jpg" },
 { text:"You love me in a way no one else ever could", image:"DSC_8189.JPG" },
@@ -182,13 +183,11 @@ const reasons=[
 
 let current=0;
 
-// build slides
 reasons.forEach(r=>{
   const s=document.createElement("div");
   s.className="slide";
   s.style.backgroundImage=`url(images/${r.image})`;
-  s.innerHTML=`<div class="caption">${r.text}</div>
-               <div class="tap">Tap right → next | Tap left → back</div>`;
+  s.innerHTML=`<div class="caption">${r.text}</div>`;
   slides.appendChild(s);
 });
 
@@ -214,27 +213,30 @@ function prev(){
   }
 }
 
-/* click zones */
+/* click navigation only when slides visible */
 document.body.addEventListener("click", e=>{
+  if(intro.style.display==="flex" || surprise.style.display==="flex") return;
   const x=e.clientX/window.innerWidth;
-  if(x<0.4) prev();
-  else next();
-});
-
-/* keyboard */
-document.addEventListener("keydown", e=>{
-  if(e.key==="ArrowRight") next();
-  if(e.key==="ArrowLeft") prev();
+  x<0.4 ? prev() : next();
 });
 
 /* swipe */
 let startX=0;
 document.addEventListener("touchstart", e=>startX=e.touches[0].clientX);
 document.addEventListener("touchend", e=>{
+  if(surprise.style.display==="flex") return;
   let endX=e.changedTouches[0].clientX;
   if(endX-startX>50) prev();
   if(startX-endX>50) next();
 });
+
+/* back from video */
+function backToSlides(){
+  surprise.style.display="none";
+  slides.style.display="block";
+  showSlide(current);
+  music.play();
+}
 
 /* YouTube API */
 let player;
@@ -244,8 +246,7 @@ function onYouTubeIframeAPIReady(){
     width:'80%',
     videoId:'5zbb1k03uhM',
     events:{onStateChange:e=>{
-      if(e.data===YT.PlayerState.PLAYING)
-        document.getElementById("music").pause();
+      if(e.data===YT.PlayerState.PLAYING) music.pause();
     }}
   });
 }
