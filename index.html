@@ -34,6 +34,7 @@ h1 {
   font-family:'Playfair Display', serif;
   font-size:32px;
   color:#8b004b;
+  font-size:clamp(24px, 6vw, 34px);
 }
 
 p {
@@ -110,9 +111,10 @@ input {
 iframe { border-radius:20px; }
 
 .loading {
-  position:absolute;
+  margin-top:10px;
   color:#8b004b;
   font-size:16px;
+  opacity:0.8;
 }
 </style>
 </head>
@@ -139,9 +141,9 @@ iframe { border-radius:20px; }
 </div>
 
 <div id="intro" class="page hidden">
-  <h1>30 reasons why I love you</h1>
-  <button onclick="startSlides()">Let’s begin</button>
+  <h1 style="margin-bottom:10px;">30 reasons why I love you</h1>
   <div class="loading" id="loading">Loading memories… ❤️</div>
+  <button onclick="startSlides()">Let’s begin</button>
 </div>
 
 <div id="slides" class="page hidden">
